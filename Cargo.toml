@@ -1,0 +1,3 @@
+[workspace]
+members = ["osu7-i2c", "osu7-client"]
+resolver = "2"

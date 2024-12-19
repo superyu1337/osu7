@@ -1,0 +1,10 @@
+[package]
+name = "osu7-i2c"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+mcp2221 = "0.1.1"
+ht16k33 = "0.4.0"
+adafruit-7segment = "0.1.0"
+embedded-hal = "0.2"
