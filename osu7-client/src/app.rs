@@ -1,29 +1,39 @@
-use std::sync::mpsc::Sender;
+use std::sync::mpsc::{Receiver, Sender};
 
 use tao::{event::Event, event_loop::{ControlFlow, EventLoopBuilder}};
 use tray_icon::{menu::{CheckMenuItem, Menu, MenuEvent, MenuItem, PredefinedMenuItem, Submenu}, TrayIconBuilder, TrayIconEvent};
 
 use crate::ChannelMsg;
 
-const ICON_BUFFER: &[u8; 1481] = include_bytes!("../asset/icon.png");
+const ICON_BUFFER: &[u8; 5169] = include_bytes!("../asset/icon.png");
 
 pub struct App;
 
 #[derive(Debug)]
 enum AppEvent {
-    TrayIconEvent(tray_icon::TrayIconEvent),
-    MenuEvent(tray_icon::menu::MenuEvent)
+    CoreMessage(ChannelMsg),
+    TrayIcon(tray_icon::TrayIconEvent),
+    Menu(tray_icon::menu::MenuEvent)
 }
 
 impl App {
-    pub fn run(tx: Sender<ChannelMsg>) {
+    pub fn run(tx: Sender<ChannelMsg>, rx: Receiver<ChannelMsg>) {
         let event_loop = EventLoopBuilder::<AppEvent>::with_user_event().build();
+
+        let proxy = event_loop.create_proxy();
+        std::thread::spawn(move || {
+            while let Ok(msg) = rx.recv() {
+                proxy
+                    .send_event(AppEvent::CoreMessage(msg))
+                    .expect("Failed to send CoreMessageEvent")
+            }
+        });
 
         // set a tray event handler that forwards the event and wakes up the event loop
         let proxy = event_loop.create_proxy();
         TrayIconEvent::set_event_handler(Some(move |event| {
             proxy
-                .send_event(AppEvent::TrayIconEvent(event))
+                .send_event(AppEvent::TrayIcon(event))
                 .expect("Failed to send TrayIconEvent")
         }));
 
@@ -31,7 +41,7 @@ impl App {
         let proxy = event_loop.create_proxy();
         MenuEvent::set_event_handler(Some(move |event| {
             proxy
-                .send_event(AppEvent::MenuEvent(event))
+                .send_event(AppEvent::Menu(event))
                 .expect("Failed to send MenuEvent");
         }));
 
@@ -50,8 +60,13 @@ impl App {
 
 
         let quit_i = MenuItem::new("Quit", true, None);
+        let ws_connected = CheckMenuItem::new("WebSocket Connected", false, false, None);
+        let display_connected = CheckMenuItem::new("WebSocket Connected", false, false, None);
 
         tray_menu.append_items(&[
+            &ws_connected,
+            &display_connected,
+            &PredefinedMenuItem::separator(),
             &display_options,
             &PredefinedMenuItem::separator(),
             &quit_i,
@@ -91,12 +106,24 @@ impl App {
                     }
                 }
 
+                Event::UserEvent(AppEvent::CoreMessage(msg)) => {
+                    match msg {
+                        ChannelMsg::DisplayConnected(connected) => {
+                            display_connected.set_checked(connected);
+                        },
+                        ChannelMsg::WebsocketConnected(connected) => {
+                            ws_connected.set_checked(connected);
+                        },
+                        _ => {},
+                    }
+                }
+
                 // TODO: still needed?
-                Event::UserEvent(AppEvent::TrayIconEvent(_event)) => {
+                Event::UserEvent(AppEvent::TrayIcon(_event)) => {
                     //println!("{event:?}");
                 }
 
-                Event::UserEvent(AppEvent::MenuEvent(event)) => {
+                Event::UserEvent(AppEvent::Menu(event)) => {
                     //println!("{event:?}");
 
                     if event.id == pp_if_fc_i.id() && pp_if_fc_i.is_checked() {
@@ -146,7 +173,7 @@ impl App {
 
                     if event.id == quit_i.id() {
                         tx.send(
-                            ChannelMsg::Exit
+                            ChannelMsg::AppExit
                         ).expect("Channel died");
 
                         tray_icon.take();

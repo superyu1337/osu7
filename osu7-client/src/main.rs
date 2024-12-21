@@ -9,7 +9,9 @@ mod schema;
 #[derive(Debug, Clone, Copy)]
 enum ChannelMsg {
     ChangeDisplayStat(Statistic),
-    Exit
+    DisplayConnected(bool),
+    WebsocketConnected(bool),
+    AppExit
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -20,14 +22,16 @@ enum Statistic {
 }
 
 fn main() {
-    let (tx, rx) = mpsc::channel();
+    let (tx1, rx1) = mpsc::channel();
+    let (tx2, rx2) = mpsc::channel();
 
     let handle = Core::run(
-        rx,
+        rx1,
+        tx2,
         "ws://127.0.0.1:24050/tokens?bulkUpdates=MainPipeline,LiveTokens".to_owned()
     );
 
-    App::run(tx);
+    App::run(tx1, rx2);
 
     handle.join().expect("Thread crashed");
 }
