@@ -91,9 +91,10 @@ impl App {
                     }
                 }
 
-                //Event::UserEvent(AppEvent::TrayIconEvent(event)) => {
+                // TODO: still needed?
+                Event::UserEvent(AppEvent::TrayIconEvent(_event)) => {
                     //println!("{event:?}");
-                //}
+                }
 
                 Event::UserEvent(AppEvent::MenuEvent(event)) => {
                     //println!("{event:?}");
@@ -144,6 +145,10 @@ impl App {
                     }
 
                     if event.id == quit_i.id() {
+                        tx.send(
+                            ChannelMsg::Exit
+                        ).expect("Channel died");
+
                         tray_icon.take();
                         *control_flow = ControlFlow::Exit;
                     }

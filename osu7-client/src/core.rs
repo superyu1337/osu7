@@ -1,6 +1,6 @@
 use std::{sync::mpsc::Receiver, thread::JoinHandle};
 
-use osu7_i2c::{i2c_mock, Osu7Display};
+use osu7_i2c::Osu7Display;
 use tungstenite::Message;
 
 use crate::{schema::Data, ChannelMsg, Statistic};
