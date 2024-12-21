@@ -1,8 +1,9 @@
 use adafruit_7segment::{Index, SevenSegment};
 use embedded_hal::blocking::i2c::{Write, WriteRead};
-use ht16k33::{Dimming, Display, HT16K33};
+use ht16k33::{Display, HT16K33};
 
 pub use ht16k33::i2c_mock;
+pub use ht16k33::Dimming;
 
 use std::fmt::Debug;
 
@@ -43,19 +44,39 @@ where
     }
     /// Write a 4-digit integer into the display buffer.
     pub fn write_buffer_integer(&mut self, number: u32) {
+        self.dev.clear_display_buffer();
         if number > 9999 {
             return;
         }
 
-        let string = format!("{:04}", number);
-        let chars: Vec<u8> = string
+        let mut num_chars: Vec<Option<u8>> = number
+            .to_string()
             .chars()
-            .map(|c| c.to_digit(10).unwrap() as u8)
-            .collect::<Vec<u8>>();
+            .map(|c| Some(c.to_digit(10).unwrap() as u8))
+            .collect();
 
-        self.dev.update_buffer_with_digit(Index::One, chars[0]);
-        self.dev.update_buffer_with_digit(Index::Two, chars[1]);
-        self.dev.update_buffer_with_digit(Index::Three, chars[2]);
-        self.dev.update_buffer_with_digit(Index::Four, chars[3]);
+        num_chars.reverse();
+
+        while num_chars.len() < 4 {
+            num_chars.push(None);
+        }
+
+        num_chars.reverse();
+
+        if let Some(v) = num_chars[0] {
+            self.dev.update_buffer_with_digit(Index::One, v);
+        }
+
+        if let Some(v) = num_chars[1] {
+            self.dev.update_buffer_with_digit(Index::Two, v);
+        }
+
+        if let Some(v) = num_chars[2] {
+            self.dev.update_buffer_with_digit(Index::Three, v);
+        }
+
+        if let Some(v) = num_chars[3] {
+            self.dev.update_buffer_with_digit(Index::Four, v);
+        }
     }
 }

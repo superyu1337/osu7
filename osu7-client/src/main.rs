@@ -28,7 +28,7 @@ fn main() {
     let handle = Core::run(
         rx1,
         tx2,
-        "ws://127.0.0.1:24050/tokens?bulkUpdates=MainPipeline,LiveTokens".to_owned()
+        "ws://localhost:24050/tokens?bulkUpdates=MainPipeline,LiveTokens".to_owned()
     );
 
     App::run(tx1, rx2);

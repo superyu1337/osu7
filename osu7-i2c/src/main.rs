@@ -1,3 +1,4 @@
+use ht16k33::Dimming;
 use osu7_i2c::{Osu7Display, I2C_ADDR};
 
 fn main() {
@@ -9,9 +10,7 @@ fn main() {
 
     display.initialize();
 
-    display.write_buffer_integer(1234);
+    display.write_buffer_integer(123);
     display.commit_buffer();
-
-    let buffer = display.device().display_buffer();
-    println!("{:#?}", buffer);
+    display.device().set_dimming(Dimming::BRIGHTNESS_MAX).unwrap();
 }

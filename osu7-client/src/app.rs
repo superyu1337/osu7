@@ -61,7 +61,7 @@ impl App {
 
         let quit_i = MenuItem::new("Quit", true, None);
         let ws_connected = CheckMenuItem::new("WebSocket Connected", false, false, None);
-        let display_connected = CheckMenuItem::new("WebSocket Connected", false, false, None);
+        let display_connected = CheckMenuItem::new("Display Connected", false, false, None);
 
         tray_menu.append_items(&[
             &ws_connected,

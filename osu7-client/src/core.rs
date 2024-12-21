@@ -1,7 +1,7 @@
 use std::{net::TcpStream, sync::mpsc::{Receiver, Sender}, thread::JoinHandle};
 
 use mcp2221::Handle;
-use osu7_i2c::Osu7Display;
+use osu7_i2c::{Dimming, Osu7Display};
 use tungstenite::{stream::MaybeTlsStream, Message, WebSocket};
 
 use crate::{schema::Data, ChannelMsg, Statistic};
@@ -25,6 +25,8 @@ impl Core {
                 tungstenite::Message::Text("[acc,simulatedPp,ppIfMapEndsNow,ppIfRestFced]".into())
             ).expect("Failed to send message to websocket");
 
+            println!("WebSocket connected");
+
             self.socket = Some(socket);
         } else {
             self.socket = None;
@@ -36,6 +38,9 @@ impl Core {
 
         if let Ok(handle) = mcp2221::Handle::open_first(&config) {
             self.display = Some(Osu7Display::new(handle, osu7_i2c::I2C_ADDR));
+            self.display.as_mut().unwrap().initialize();
+            self.display.as_mut().unwrap().device().set_dimming(Dimming::BRIGHTNESS_16_16).unwrap();
+            println!("Display Connected")
         } else {
             self.display = None;
         }
@@ -58,7 +63,10 @@ impl Core {
                     ChannelMsg::ChangeDisplayStat(new_mode) => {
                         mode = new_mode
                     },
-                    ChannelMsg::AppExit => break,
+                    ChannelMsg::AppExit => {
+                        println!("core thread exited");
+                        break
+                    },
                     _ => {}
                 }
             }
@@ -83,21 +91,26 @@ impl Core {
                 continue;
             }
 
-            if let Some(Message::Text(bytes)) = self.read_socket() {
-                let data: Data = serde_json::from_str(bytes.as_str()).unwrap();
+            if let Some(msg) = self.read_socket() {
+
+                if let Message::Text(bytes) = msg {
+                    let data: Data = serde_json::from_str(bytes.as_str()).unwrap();
     
-                let value_to_display = match mode {
-                    Statistic::PerformanceIfFC => data.pp_if_fc(),
-                    Statistic::PerformanceIfEndsNow => data.pp_ends_now(),
-                    Statistic::Accuracy => data.accuracy(),
-                };
-
-                let as_int = value_to_display.round() as u32;
-
-                if let Some(disp) = &mut self.display {
-                    disp.write_buffer_integer(as_int);
-                    disp.commit_buffer();
+                    let value_to_display = match mode {
+                        Statistic::PerformanceIfFC => data.pp_if_fc(),
+                        Statistic::PerformanceIfEndsNow => data.pp_ends_now(),
+                        Statistic::Accuracy => data.accuracy(),
+                    };
+    
+                    let as_int = value_to_display.round() as u32;
+    
+                    if let Some(disp) = &mut self.display {
+                        disp.write_buffer_integer(as_int);
+                        disp.commit_buffer();
+                    }
                 }
+
+
             }
         }
     }
