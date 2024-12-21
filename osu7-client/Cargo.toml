@@ -9,6 +9,8 @@ tao = "0.31.0"
 tray-icon = "0.19.2"
 
 osu7-i2c = { path = "../osu7-i2c" }
+mcp2221 = "0.1.1"
+
 tungstenite = "0.26.1"
 serde = { version = "1.0.216", features = ["derive"] }
 serde_json = "1.0.133"

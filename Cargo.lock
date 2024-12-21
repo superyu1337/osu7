@@ -1730,6 +1730,7 @@ version = "0.1.0"
 dependencies = [
  "getset",
  "image",
+ "mcp2221",
  "osu7-i2c",
  "serde",
  "serde_json",

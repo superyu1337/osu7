@@ -23,7 +23,8 @@ impl Core {
 
         let mut mode = Statistic::PerformanceIfEndsNow;
 
-        let i2c = i2c_mock::I2cMock::new();
+        let config = mcp2221::Config::default();
+        let i2c = mcp2221::Handle::open_first(&config).unwrap();
         let mut display = Osu7Display::new(i2c, osu7_i2c::I2C_ADDR);
 
         loop {
