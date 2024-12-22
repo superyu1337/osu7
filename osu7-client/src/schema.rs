@@ -10,6 +10,8 @@ pub struct Data {
     pp_if_fc: f64,
     #[serde(rename = "acc")]
     accuracy: f64,
+    #[serde(rename = "unstableRate")]
+    unstable_rate: f64,
 }
 
 #[derive(Default, Debug, Clone, Copy, Serialize, Deserialize, CopyGetters)]

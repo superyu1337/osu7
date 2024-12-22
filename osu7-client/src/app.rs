@@ -51,13 +51,14 @@ impl App {
         let pp_ends_now_i = CheckMenuItem::new("PP (If ends now)", false, true, None);
         let pp_if_fc_i = CheckMenuItem::new("PP (If FC)", true, false, None);
         let acc_i = CheckMenuItem::new("Accuracy", true, false, None);
+        let ur_i = CheckMenuItem::new("Unstable Rate", true, false, None);
 
         display_options.append_items(&[
             &pp_ends_now_i,
             &pp_if_fc_i,
-            &acc_i
+            &acc_i,
+            &ur_i
         ]).unwrap();
-
 
         let quit_i = MenuItem::new("Quit", true, None);
         let ws_connected = CheckMenuItem::new("WebSocket Connected", false, false, None);
@@ -124,8 +125,6 @@ impl App {
                 }
 
                 Event::UserEvent(AppEvent::Menu(event)) => {
-                    //println!("{event:?}");
-
                     if event.id == pp_if_fc_i.id() && pp_if_fc_i.is_checked() {
                         acc_i.set_checked(false);
                         acc_i.set_enabled(true);
@@ -146,6 +145,8 @@ impl App {
                         acc_i.set_enabled(true);
                         pp_if_fc_i.set_checked(false);
                         pp_if_fc_i.set_enabled(true);
+                        ur_i.set_checked(false);
+                        ur_i.set_enabled(true);
 
                         pp_ends_now_i.set_enabled(false);
 
@@ -161,12 +162,31 @@ impl App {
                         pp_ends_now_i.set_enabled(true);
                         pp_if_fc_i.set_checked(false);
                         pp_if_fc_i.set_enabled(true);
+                        ur_i.set_checked(false);
+                        ur_i.set_enabled(true);
 
                         acc_i.set_enabled(false);
 
                         tx.send(
                             ChannelMsg::ChangeDisplayStat(
                                 crate::Statistic::Accuracy
+                            )
+                        ).expect("Channel died")
+                    }
+
+                    if event.id == ur_i.id() && ur_i.is_checked() {
+                        pp_ends_now_i.set_checked(false);
+                        pp_ends_now_i.set_enabled(true);
+                        pp_if_fc_i.set_checked(false);
+                        pp_if_fc_i.set_enabled(true);
+                        acc_i.set_checked(false);
+                        acc_i.set_enabled(true);
+
+                        ur_i.set_enabled(false);
+
+                        tx.send(
+                            ChannelMsg::ChangeDisplayStat(
+                                crate::Statistic::UnstableRate
                             )
                         ).expect("Channel died")
                     }

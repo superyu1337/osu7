@@ -18,17 +18,24 @@ enum ChannelMsg {
 enum Statistic {
     PerformanceIfFC,
     PerformanceIfEndsNow,
-    Accuracy
+    Accuracy,
+    UnstableRate,
 }
 
+const DEFAULT_URL: &str = "ws://localhost:24050/tokens?bulkUpdates=MainPipeline,LiveToken";
+
 fn main() {
+
+    let url = std::fs::read_to_string("./url.txt")
+        .unwrap_or(DEFAULT_URL.to_owned());
+
     let (tx1, rx1) = mpsc::channel();
     let (tx2, rx2) = mpsc::channel();
 
     let handle = Core::run(
         rx1,
         tx2,
-        "ws://localhost:24050/tokens?bulkUpdates=MainPipeline,LiveTokens".to_owned()
+        url
     );
 
     App::run(tx1, rx2);

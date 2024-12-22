@@ -10,7 +10,7 @@ fn main() {
 
     display.initialize();
 
-    display.write_buffer_integer(123);
-    display.commit_buffer();
-    display.device().set_dimming(Dimming::BRIGHTNESS_MAX).unwrap();
+    //display.write_buffer_integer(123);
+    //display.commit_buffer();
+    //display.device().set_dimming(Dimming::BRIGHTNESS_MAX).unwrap();
 }
