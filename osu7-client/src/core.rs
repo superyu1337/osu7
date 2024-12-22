@@ -1,7 +1,7 @@
-use std::{net::{SocketAddr, TcpStream}, sync::mpsc::{Receiver, Sender}, thread::JoinHandle};
+use std::{net::TcpStream, sync::mpsc::{Receiver, Sender}, thread::JoinHandle};
 
 use mcp2221::Handle;
-use osu7_i2c::{AsciiChar, Dimming, Osu7Display};
+use osu7_i2c::{Dimming, Osu7Display};
 use tungstenite::{stream::MaybeTlsStream, Message, WebSocket};
 
 use crate::{schema::Data, ChannelMsg, Statistic};
@@ -40,7 +40,6 @@ impl Core {
             let disp = self.display.as_mut().unwrap();
             disp.initialize();
             disp.device().set_dimming(Dimming::BRIGHTNESS_16_16).unwrap();
-
         } else {
             self.display = None;
         }
@@ -64,7 +63,10 @@ impl Core {
                         mode = new_mode
                     },
                     ChannelMsg::AppExit => {
-                        println!("core thread exited");
+                        if let Some(disp) = &mut self.display {
+                            disp.device().clear_display_buffer();
+                            disp.commit_buffer().expect("Failed to commit buffer");
+                        }
                         break
                     },
                     _ => {}
@@ -128,6 +130,11 @@ impl Core {
             } else {
                 self.socket = None;
                 tx.send(ChannelMsg::WebsocketConnected(false)).expect("Channel died");
+
+                if let Some(disp) = &mut self.display {
+                    disp.device().clear_display_buffer();
+                    disp.print_default();
+                }
             }
         }
     }
