@@ -34,84 +34,49 @@ where
         self.dev.write_display_buffer()
     }
 
-    pub fn print_default(&mut self) {
+    pub fn write_buffer_osu7(&mut self) -> Result<(), E> {
         // Print O
-        self.dev
-            .set_led(LedLocation::new(0, 0).unwrap(), true)
-            .expect("Failed to set LED");
-        self.dev
-            .set_led(LedLocation::new(0, 1).unwrap(), true)
-            .expect("Failed to set LED");
-        self.dev
-            .set_led(LedLocation::new(0, 2).unwrap(), true)
-            .expect("Failed to set LED");
-        self.dev
-            .set_led(LedLocation::new(0, 3).unwrap(), true)
-            .expect("Failed to set LED");
-        self.dev
-            .set_led(LedLocation::new(0, 4).unwrap(), true)
-            .expect("Failed to set LED");
-        self.dev
-            .set_led(LedLocation::new(0, 5).unwrap(), true)
-            .expect("Failed to set LED");
+        self.dev.set_led(LedLocation::new(0, 0).unwrap(), true)?;
+        self.dev.set_led(LedLocation::new(0, 1).unwrap(), true)?;
+        self.dev.set_led(LedLocation::new(0, 2).unwrap(), true)?;
+        self.dev.set_led(LedLocation::new(0, 3).unwrap(), true)?;
+        self.dev.set_led(LedLocation::new(0, 4).unwrap(), true)?;
+        self.dev.set_led(LedLocation::new(0, 5).unwrap(), true)?;
 
         // Print S
-        self.dev
-            .set_led(LedLocation::new(2, 0).unwrap(), true)
-            .expect("Failed to set LED");
-        self.dev
-            .set_led(LedLocation::new(2, 5).unwrap(), true)
-            .expect("Failed to set LED");
-        self.dev
-            .set_led(LedLocation::new(2, 6).unwrap(), true)
-            .expect("Failed to set LED");
-        self.dev
-            .set_led(LedLocation::new(2, 2).unwrap(), true)
-            .expect("Failed to set LED");
-        self.dev
-            .set_led(LedLocation::new(2, 3).unwrap(), true)
-            .expect("Failed to set LED");
+        self.dev.set_led(LedLocation::new(2, 0).unwrap(), true)?;
+        self.dev.set_led(LedLocation::new(2, 5).unwrap(), true)?;
+        self.dev.set_led(LedLocation::new(2, 6).unwrap(), true)?;
+        self.dev.set_led(LedLocation::new(2, 2).unwrap(), true)?;
+        self.dev.set_led(LedLocation::new(2, 3).unwrap(), true)?;
 
         // Print U
-        self.dev
-            .set_led(LedLocation::new(6, 1).unwrap(), true)
-            .expect("Failed to set LED");
-        self.dev
-            .set_led(LedLocation::new(6, 2).unwrap(), true)
-            .expect("Failed to set LED");
-        self.dev
-            .set_led(LedLocation::new(6, 3).unwrap(), true)
-            .expect("Failed to set LED");
-        self.dev
-            .set_led(LedLocation::new(6, 4).unwrap(), true)
-            .expect("Failed to set LED");
-        self.dev
-            .set_led(LedLocation::new(6, 5).unwrap(), true)
-            .expect("Failed to set LED");
+        self.dev.set_led(LedLocation::new(6, 1).unwrap(), true)?;
+        self.dev.set_led(LedLocation::new(6, 2).unwrap(), true)?;
+        self.dev.set_led(LedLocation::new(6, 3).unwrap(), true)?;
+        self.dev.set_led(LedLocation::new(6, 4).unwrap(), true)?;
+        self.dev.set_led(LedLocation::new(6, 5).unwrap(), true)?;
 
         // Print 7
-        self.dev
-            .set_led(LedLocation::new(8, 0).unwrap(), true)
-            .expect("Failed to set LED");
-        self.dev
-            .set_led(LedLocation::new(8, 1).unwrap(), true)
-            .expect("Failed to set LED");
-        self.dev
-            .set_led(LedLocation::new(8, 2).unwrap(), true)
-            .expect("Failed to set LED");
-        self.commit_buffer().expect("Failed to commit buffer");
+        self.dev.set_led(LedLocation::new(8, 0).unwrap(), true)?;
+        self.dev.set_led(LedLocation::new(8, 1).unwrap(), true)?;
+        self.dev.set_led(LedLocation::new(8, 2).unwrap(), true)?;
+
+        Ok(())
     }
 
     pub fn initialize(&mut self) {
         self.dev.initialize().expect("Failed to initialize HT16K33");
         self.dev
             .set_display(Display::ON)
-            .expect("Could not turn on the display!");
+            .expect("Could not turn on the display");
         self.dev
             .set_dimming(Dimming::BRIGHTNESS_MIN)
-            .expect("Could not set dimming!");
+            .expect("Could not set dimming");
 
-        self.print_default();
+        self.write_buffer_osu7()
+            .expect("Failed to write default buffer");
+        self.commit_buffer().expect("Failed to commit buffer");
     }
 
     pub fn write_chars(&mut self, chars: [Option<AsciiChar>; 4]) {

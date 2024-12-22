@@ -1,4 +1,3 @@
-use ht16k33::Dimming;
 use osu7_i2c::{Osu7Display, I2C_ADDR};
 
 fn main() {

@@ -9,17 +9,25 @@ mod schema;
 #[derive(Debug, Clone, Copy)]
 enum ChannelMsg {
     ChangeDisplayStat(Statistic),
+    ChangeDisplayBrightness(Brightness),
     DisplayConnected(bool),
     WebsocketConnected(bool),
     AppExit,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 enum Statistic {
     PerformanceIfFC,
     PerformanceIfEndsNow,
     Accuracy,
     UnstableRate,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
+enum Brightness {
+    Minimum,
+    Medium,
+    Maximum,
 }
 
 const DEFAULT_URL: &str = "ws://localhost:24050/tokens?bulkUpdates=MainPipeline,LiveToken";

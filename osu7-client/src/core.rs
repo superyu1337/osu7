@@ -8,11 +8,12 @@ use mcp2221::Handle;
 use osu7_i2c::{Dimming, Osu7Display};
 use tungstenite::{stream::MaybeTlsStream, Message, WebSocket};
 
-use crate::{schema::Data, ChannelMsg, Statistic};
+use crate::{schema::Data, Brightness, ChannelMsg, Statistic};
 
 pub struct Core {
     socket: Option<WebSocket<MaybeTlsStream<TcpStream>>>,
     display: Option<Osu7Display<Handle>>,
+    brightness: Brightness,
 }
 
 impl Core {
@@ -20,6 +21,7 @@ impl Core {
         let mut instance = Core {
             socket: None,
             display: None,
+            brightness: Brightness::Medium,
         };
         std::thread::spawn(move || {
             Self::inner(&mut instance, rx, tx, url);
@@ -40,17 +42,25 @@ impl Core {
         }
     }
 
+    fn get_dimming(&self) -> Dimming {
+        match self.brightness {
+            Brightness::Minimum => Dimming::BRIGHTNESS_MIN,
+            Brightness::Medium => Dimming::BRIGHTNESS_8_16,
+            Brightness::Maximum => Dimming::BRIGHTNESS_MAX,
+        }
+    }
+
     pub fn connect_display(&mut self) {
         let config = mcp2221::Config::default();
 
         if let Ok(handle) = mcp2221::Handle::open_first(&config) {
             self.display = Some(Osu7Display::new(handle, osu7_i2c::I2C_ADDR));
 
+            let dimming = self.get_dimming();
+
             let disp = self.display.as_mut().unwrap();
             disp.initialize();
-            disp.device()
-                .set_dimming(Dimming::BRIGHTNESS_16_16)
-                .unwrap();
+            disp.device().set_dimming(dimming).unwrap();
         } else {
             self.display = None;
         }
@@ -66,11 +76,15 @@ impl Core {
 
     pub fn inner(&mut self, rx: Receiver<ChannelMsg>, tx: Sender<ChannelMsg>, url: String) {
         let mut mode = Statistic::PerformanceIfEndsNow;
+        let mut last_brightness = self.brightness;
 
         loop {
             if let Ok(msg) = rx.try_recv() {
                 match msg {
                     ChannelMsg::ChangeDisplayStat(new_mode) => mode = new_mode,
+                    ChannelMsg::ChangeDisplayBrightness(brightness) => {
+                        self.brightness = brightness;
+                    }
                     ChannelMsg::AppExit => {
                         if let Some(disp) = &mut self.display {
                             disp.device().clear_display_buffer();
@@ -79,6 +93,17 @@ impl Core {
                         break;
                     }
                     _ => {}
+                }
+            }
+
+            if last_brightness != self.brightness {
+                let dimming = self.get_dimming();
+
+                if let Some(disp) = &mut self.display {
+                    disp.device()
+                        .set_dimming(dimming)
+                        .expect("failed to set dimming");
+                    last_brightness = self.brightness;
                 }
             }
 
@@ -98,8 +123,6 @@ impl Core {
                     tx.send(ChannelMsg::WebsocketConnected(true))
                         .expect("Channel died");
                 }
-
-                continue;
             }
 
             if let Some(Message::Text(bytes)) = self.read_socket() {
@@ -145,7 +168,11 @@ impl Core {
 
                 if let Some(disp) = &mut self.display {
                     disp.device().clear_display_buffer();
-                    disp.print_default();
+                    if disp.write_buffer_osu7().is_err() || disp.commit_buffer().is_err() {
+                        self.display = None;
+                        tx.send(ChannelMsg::DisplayConnected(false))
+                            .expect("Channel died");
+                    }
                 }
             }
         }

@@ -63,6 +63,15 @@ impl App {
             .append_items(&[&pp_ends_now_i, &pp_if_fc_i, &acc_i, &ur_i])
             .unwrap();
 
+        let brightness_options = Submenu::new("Brightness", true);
+        let min_brightness_i = CheckMenuItem::new("Minimum", true, false, None);
+        let med_brightness_i = CheckMenuItem::new("Medium", false, true, None);
+        let max_brightness_i = CheckMenuItem::new("Maximum", true, false, None);
+
+        brightness_options
+            .append_items(&[&max_brightness_i, &med_brightness_i, &min_brightness_i])
+            .unwrap();
+
         let quit_i = MenuItem::new("Quit", true, None);
         let ws_connected = CheckMenuItem::new("WebSocket Connected", false, false, None);
         let display_connected = CheckMenuItem::new("Display Connected", false, false, None);
@@ -73,6 +82,7 @@ impl App {
                 &display_connected,
                 &PredefinedMenuItem::separator(),
                 &display_options,
+                &brightness_options,
                 &PredefinedMenuItem::separator(),
                 &quit_i,
             ])
@@ -128,6 +138,50 @@ impl App {
                 }
 
                 Event::UserEvent(AppEvent::Menu(event)) => {
+                    // Brightness
+                    if event.id == min_brightness_i.id() && min_brightness_i.is_checked() {
+                        med_brightness_i.set_checked(false);
+                        med_brightness_i.set_enabled(true);
+                        max_brightness_i.set_checked(false);
+                        max_brightness_i.set_enabled(true);
+
+                        min_brightness_i.set_enabled(false);
+
+                        tx.send(ChannelMsg::ChangeDisplayBrightness(
+                            crate::Brightness::Minimum,
+                        ))
+                        .expect("Channel died")
+                    }
+
+                    if event.id == med_brightness_i.id() && med_brightness_i.is_checked() {
+                        min_brightness_i.set_checked(false);
+                        min_brightness_i.set_enabled(true);
+                        max_brightness_i.set_checked(false);
+                        max_brightness_i.set_enabled(true);
+
+                        med_brightness_i.set_enabled(false);
+
+                        tx.send(ChannelMsg::ChangeDisplayBrightness(
+                            crate::Brightness::Medium,
+                        ))
+                        .expect("Channel died")
+                    }
+
+                    if event.id == max_brightness_i.id() && max_brightness_i.is_checked() {
+                        min_brightness_i.set_checked(false);
+                        min_brightness_i.set_enabled(true);
+                        med_brightness_i.set_checked(false);
+                        med_brightness_i.set_enabled(true);
+
+                        max_brightness_i.set_enabled(false);
+
+                        tx.send(ChannelMsg::ChangeDisplayBrightness(
+                            crate::Brightness::Maximum,
+                        ))
+                        .expect("Channel died")
+                    }
+
+                    // Settings
                     if event.id == pp_if_fc_i.id() && pp_if_fc_i.is_checked() {
                         acc_i.set_checked(false);
                         acc_i.set_enabled(true);
@@ -188,6 +242,7 @@ impl App {
                         .expect("Channel died")
                     }
 
+                    // Exit
                     if event.id == quit_i.id() {
                         tx.send(ChannelMsg::AppExit).expect("Channel died");
 
