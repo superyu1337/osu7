@@ -1,7 +1,13 @@
 use std::sync::mpsc::{Receiver, Sender};
 
-use tao::{event::Event, event_loop::{ControlFlow, EventLoopBuilder}};
-use tray_icon::{menu::{CheckMenuItem, Menu, MenuEvent, MenuItem, PredefinedMenuItem, Submenu}, TrayIconBuilder, TrayIconEvent};
+use tao::{
+    event::Event,
+    event_loop::{ControlFlow, EventLoopBuilder},
+};
+use tray_icon::{
+    menu::{CheckMenuItem, Menu, MenuEvent, MenuItem, PredefinedMenuItem, Submenu},
+    TrayIconBuilder, TrayIconEvent,
+};
 
 use crate::ChannelMsg;
 
@@ -13,7 +19,7 @@ pub struct App;
 enum AppEvent {
     CoreMessage(ChannelMsg),
     TrayIcon(tray_icon::TrayIconEvent),
-    Menu(tray_icon::menu::MenuEvent)
+    Menu(tray_icon::menu::MenuEvent),
 }
 
 impl App {
@@ -53,25 +59,24 @@ impl App {
         let acc_i = CheckMenuItem::new("Accuracy", true, false, None);
         let ur_i = CheckMenuItem::new("Unstable Rate", true, false, None);
 
-        display_options.append_items(&[
-            &pp_ends_now_i,
-            &pp_if_fc_i,
-            &acc_i,
-            &ur_i
-        ]).unwrap();
+        display_options
+            .append_items(&[&pp_ends_now_i, &pp_if_fc_i, &acc_i, &ur_i])
+            .unwrap();
 
         let quit_i = MenuItem::new("Quit", true, None);
         let ws_connected = CheckMenuItem::new("WebSocket Connected", false, false, None);
         let display_connected = CheckMenuItem::new("Display Connected", false, false, None);
 
-        tray_menu.append_items(&[
-            &ws_connected,
-            &display_connected,
-            &PredefinedMenuItem::separator(),
-            &display_options,
-            &PredefinedMenuItem::separator(),
-            &quit_i,
-        ]).unwrap();
+        tray_menu
+            .append_items(&[
+                &ws_connected,
+                &display_connected,
+                &PredefinedMenuItem::separator(),
+                &display_options,
+                &PredefinedMenuItem::separator(),
+                &quit_i,
+            ])
+            .unwrap();
 
         let mut tray_icon = None;
 
@@ -107,17 +112,15 @@ impl App {
                     }
                 }
 
-                Event::UserEvent(AppEvent::CoreMessage(msg)) => {
-                    match msg {
-                        ChannelMsg::DisplayConnected(connected) => {
-                            display_connected.set_checked(connected);
-                        },
-                        ChannelMsg::WebsocketConnected(connected) => {
-                            ws_connected.set_checked(connected);
-                        },
-                        _ => {},
+                Event::UserEvent(AppEvent::CoreMessage(msg)) => match msg {
+                    ChannelMsg::DisplayConnected(connected) => {
+                        display_connected.set_checked(connected);
                     }
-                }
+                    ChannelMsg::WebsocketConnected(connected) => {
+                        ws_connected.set_checked(connected);
+                    }
+                    _ => {}
+                },
 
                 // TODO: still needed?
                 Event::UserEvent(AppEvent::TrayIcon(_event)) => {
@@ -133,11 +136,10 @@ impl App {
 
                         pp_if_fc_i.set_enabled(false);
 
-                        tx.send(
-                            ChannelMsg::ChangeDisplayStat(
-                                crate::Statistic::PerformanceIfFC
-                            )
-                        ).expect("Channel died")
+                        tx.send(ChannelMsg::ChangeDisplayStat(
+                            crate::Statistic::PerformanceIfFC,
+                        ))
+                        .expect("Channel died")
                     }
 
                     if event.id == pp_ends_now_i.id() && pp_ends_now_i.is_checked() {
@@ -150,11 +152,10 @@ impl App {
 
                         pp_ends_now_i.set_enabled(false);
 
-                        tx.send(
-                            ChannelMsg::ChangeDisplayStat(
-                                crate::Statistic::PerformanceIfEndsNow
-                            )
-                        ).expect("Channel died")
+                        tx.send(ChannelMsg::ChangeDisplayStat(
+                            crate::Statistic::PerformanceIfEndsNow,
+                        ))
+                        .expect("Channel died")
                     }
 
                     if event.id == acc_i.id() && acc_i.is_checked() {
@@ -167,11 +168,8 @@ impl App {
 
                         acc_i.set_enabled(false);
 
-                        tx.send(
-                            ChannelMsg::ChangeDisplayStat(
-                                crate::Statistic::Accuracy
-                            )
-                        ).expect("Channel died")
+                        tx.send(ChannelMsg::ChangeDisplayStat(crate::Statistic::Accuracy))
+                            .expect("Channel died")
                     }
 
                     if event.id == ur_i.id() && ur_i.is_checked() {
@@ -184,17 +182,14 @@ impl App {
 
                         ur_i.set_enabled(false);
 
-                        tx.send(
-                            ChannelMsg::ChangeDisplayStat(
-                                crate::Statistic::UnstableRate
-                            )
-                        ).expect("Channel died")
+                        tx.send(ChannelMsg::ChangeDisplayStat(
+                            crate::Statistic::UnstableRate,
+                        ))
+                        .expect("Channel died")
                     }
 
                     if event.id == quit_i.id() {
-                        tx.send(
-                            ChannelMsg::AppExit
-                        ).expect("Channel died");
+                        tx.send(ChannelMsg::AppExit).expect("Channel died");
 
                         tray_icon.take();
                         *control_flow = ControlFlow::Exit;

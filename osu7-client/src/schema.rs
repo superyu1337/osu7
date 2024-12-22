@@ -17,11 +17,11 @@ pub struct Data {
 #[derive(Default, Debug, Clone, Copy, Serialize, Deserialize, CopyGetters)]
 #[getset(get_copy = "pub")]
 pub struct Gameplay {
-    pp: PerformancePoints
+    pp: PerformancePoints,
 }
 
 #[derive(Default, Debug, Clone, Copy, Serialize, Deserialize, CopyGetters)]
 #[getset(get_copy = "pub")]
 pub struct PerformancePoints {
-    current: f64
+    current: f64,
 }

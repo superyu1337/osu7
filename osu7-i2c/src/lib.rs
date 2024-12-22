@@ -3,9 +3,9 @@ use embedded_hal::blocking::i2c::{Write, WriteRead};
 use ht16k33::LedLocation;
 use ht16k33::{Display, HT16K33};
 
+pub use adafruit_7segment::AsciiChar;
 pub use ht16k33::i2c_mock;
 pub use ht16k33::Dimming;
-pub use adafruit_7segment::AsciiChar;
 
 use std::fmt::Debug;
 
@@ -18,7 +18,7 @@ pub struct Osu7Display<I2C> {
 impl<I2C, E> Osu7Display<I2C>
 where
     I2C: Write<Error = E> + WriteRead<Error = E>,
-    E: Debug
+    E: Debug,
 {
     pub fn new(i2c: I2C, address: u8) -> Osu7Display<I2C> {
         Self {
@@ -36,37 +36,74 @@ where
 
     pub fn print_default(&mut self) {
         // Print O
-        self.dev.set_led(LedLocation::new(0, 0).unwrap(), true).expect("Failed to set LED");
-        self.dev.set_led(LedLocation::new(0, 1).unwrap(), true).expect("Failed to set LED");
-        self.dev.set_led(LedLocation::new(0, 2).unwrap(), true).expect("Failed to set LED");
-        self.dev.set_led(LedLocation::new(0, 3).unwrap(), true).expect("Failed to set LED");
-        self.dev.set_led(LedLocation::new(0, 4).unwrap(), true).expect("Failed to set LED");
-        self.dev.set_led(LedLocation::new(0, 5).unwrap(), true).expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(0, 0).unwrap(), true)
+            .expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(0, 1).unwrap(), true)
+            .expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(0, 2).unwrap(), true)
+            .expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(0, 3).unwrap(), true)
+            .expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(0, 4).unwrap(), true)
+            .expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(0, 5).unwrap(), true)
+            .expect("Failed to set LED");
 
         // Print S
-        self.dev.set_led(LedLocation::new(2, 0).unwrap(), true).expect("Failed to set LED");
-        self.dev.set_led(LedLocation::new(2, 5).unwrap(), true).expect("Failed to set LED");
-        self.dev.set_led(LedLocation::new(2, 6).unwrap(), true).expect("Failed to set LED");
-        self.dev.set_led(LedLocation::new(2, 2).unwrap(), true).expect("Failed to set LED");
-        self.dev.set_led(LedLocation::new(2, 3).unwrap(), true).expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(2, 0).unwrap(), true)
+            .expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(2, 5).unwrap(), true)
+            .expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(2, 6).unwrap(), true)
+            .expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(2, 2).unwrap(), true)
+            .expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(2, 3).unwrap(), true)
+            .expect("Failed to set LED");
 
         // Print U
-        self.dev.set_led(LedLocation::new(6, 1).unwrap(), true).expect("Failed to set LED");
-        self.dev.set_led(LedLocation::new(6, 2).unwrap(), true).expect("Failed to set LED");
-        self.dev.set_led(LedLocation::new(6, 3).unwrap(), true).expect("Failed to set LED");
-        self.dev.set_led(LedLocation::new(6, 4).unwrap(), true).expect("Failed to set LED");
-        self.dev.set_led(LedLocation::new(6, 5).unwrap(), true).expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(6, 1).unwrap(), true)
+            .expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(6, 2).unwrap(), true)
+            .expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(6, 3).unwrap(), true)
+            .expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(6, 4).unwrap(), true)
+            .expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(6, 5).unwrap(), true)
+            .expect("Failed to set LED");
 
         // Print 7
-        self.dev.set_led(LedLocation::new(8, 0).unwrap(), true).expect("Failed to set LED");
-        self.dev.set_led(LedLocation::new(8, 1).unwrap(), true).expect("Failed to set LED");
-        self.dev.set_led(LedLocation::new(8, 2).unwrap(), true).expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(8, 0).unwrap(), true)
+            .expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(8, 1).unwrap(), true)
+            .expect("Failed to set LED");
+        self.dev
+            .set_led(LedLocation::new(8, 2).unwrap(), true)
+            .expect("Failed to set LED");
         self.commit_buffer().expect("Failed to commit buffer");
     }
 
     pub fn initialize(&mut self) {
-        self.dev.initialize()
-            .expect("Failed to initialize HT16K33");
+        self.dev.initialize().expect("Failed to initialize HT16K33");
         self.dev
             .set_display(Display::ON)
             .expect("Could not turn on the display!");
@@ -79,25 +116,35 @@ where
 
     pub fn write_chars(&mut self, chars: [Option<AsciiChar>; 4]) {
         if let Some(character) = chars[0] {
-            self.dev.update_buffer_with_char(Index::One, character).expect("Failed to set char");
+            self.dev
+                .update_buffer_with_char(Index::One, character)
+                .expect("Failed to set char");
         }
 
         if let Some(character) = chars[1] {
-            self.dev.update_buffer_with_char(Index::Two, character).expect("Failed to set char");
+            self.dev
+                .update_buffer_with_char(Index::Two, character)
+                .expect("Failed to set char");
         }
 
         if let Some(character) = chars[2] {
-            self.dev.update_buffer_with_char(Index::Three, character).expect("Failed to set char");
+            self.dev
+                .update_buffer_with_char(Index::Three, character)
+                .expect("Failed to set char");
         }
 
         if let Some(character) = chars[3] {
-            self.dev.update_buffer_with_char(Index::Four, character).expect("Failed to set char");
+            self.dev
+                .update_buffer_with_char(Index::Four, character)
+                .expect("Failed to set char");
         }
     }
 
     pub fn write_buffer_float(&mut self, float: f32) {
         self.dev.clear_display_buffer();
-        self.dev.update_buffer_with_float(Index::One, float, 2, 10).expect("Failed to write float");
+        self.dev
+            .update_buffer_with_float(Index::One, float, 2, 10)
+            .expect("Failed to write float");
     }
 
     /// Write a 4-digit integer into the display buffer.

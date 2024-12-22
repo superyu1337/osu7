@@ -1,4 +1,8 @@
-use std::{net::TcpStream, sync::mpsc::{Receiver, Sender}, thread::JoinHandle};
+use std::{
+    net::TcpStream,
+    sync::mpsc::{Receiver, Sender},
+    thread::JoinHandle,
+};
 
 use mcp2221::Handle;
 use osu7_i2c::{Dimming, Osu7Display};
@@ -8,12 +12,15 @@ use crate::{schema::Data, ChannelMsg, Statistic};
 
 pub struct Core {
     socket: Option<WebSocket<MaybeTlsStream<TcpStream>>>,
-    display: Option<Osu7Display<Handle>>
+    display: Option<Osu7Display<Handle>>,
 }
 
 impl Core {
     pub fn run(rx: Receiver<ChannelMsg>, tx: Sender<ChannelMsg>, url: String) -> JoinHandle<()> {
-        let mut instance = Core { socket: None, display: None };
+        let mut instance = Core {
+            socket: None,
+            display: None,
+        };
         std::thread::spawn(move || {
             Self::inner(&mut instance, rx, tx, url);
         })
@@ -21,9 +28,11 @@ impl Core {
 
     pub fn connect(&mut self, url: &str) {
         if let Ok((mut socket, _)) = tungstenite::connect(url) {
-            socket.send(
-                tungstenite::Message::Text("[acc,simulatedPp,ppIfMapEndsNow,ppIfRestFced]".into())
-            ).expect("Failed to send message to websocket");
+            socket
+                .send(tungstenite::Message::Text(
+                    "[acc,simulatedPp,ppIfMapEndsNow,ppIfRestFced]".into(),
+                ))
+                .expect("Failed to send message to websocket");
 
             self.socket = Some(socket);
         } else {
@@ -39,7 +48,9 @@ impl Core {
 
             let disp = self.display.as_mut().unwrap();
             disp.initialize();
-            disp.device().set_dimming(Dimming::BRIGHTNESS_16_16).unwrap();
+            disp.device()
+                .set_dimming(Dimming::BRIGHTNESS_16_16)
+                .unwrap();
         } else {
             self.display = None;
         }
@@ -59,16 +70,14 @@ impl Core {
         loop {
             if let Ok(msg) = rx.try_recv() {
                 match msg {
-                    ChannelMsg::ChangeDisplayStat(new_mode) => {
-                        mode = new_mode
-                    },
+                    ChannelMsg::ChangeDisplayStat(new_mode) => mode = new_mode,
                     ChannelMsg::AppExit => {
                         if let Some(disp) = &mut self.display {
                             disp.device().clear_display_buffer();
                             disp.commit_buffer().expect("Failed to commit buffer");
                         }
-                        break
-                    },
+                        break;
+                    }
                     _ => {}
                 }
             }
@@ -77,7 +86,8 @@ impl Core {
                 self.connect_display();
 
                 if self.display.is_some() {
-                    tx.send(ChannelMsg::DisplayConnected(true)).expect("Channel died");
+                    tx.send(ChannelMsg::DisplayConnected(true))
+                        .expect("Channel died");
                 }
             }
 
@@ -85,7 +95,8 @@ impl Core {
                 self.connect(&url);
 
                 if self.socket.is_some() {
-                    tx.send(ChannelMsg::WebsocketConnected(true)).expect("Channel died");
+                    tx.send(ChannelMsg::WebsocketConnected(true))
+                        .expect("Channel died");
                 }
 
                 continue;
@@ -93,7 +104,7 @@ impl Core {
 
             if let Some(Message::Text(bytes)) = self.read_socket() {
                 let data: Data = serde_json::from_str(bytes.as_str()).unwrap();
-    
+
                 let value_to_display = match mode {
                     Statistic::PerformanceIfFC => data.pp_if_fc(),
                     Statistic::PerformanceIfEndsNow => data.pp_ends_now(),
@@ -109,10 +120,11 @@ impl Core {
                             disp.write_buffer_float(v);
                             if disp.commit_buffer().is_err() {
                                 self.display = None;
-                                tx.send(ChannelMsg::DisplayConnected(false)).expect("Channel died");
+                                tx.send(ChannelMsg::DisplayConnected(false))
+                                    .expect("Channel died");
                             }
                         }
-                    },
+                    }
                     _ => {
                         let v = value_to_display.round() as u32;
 
@@ -120,16 +132,16 @@ impl Core {
                             disp.write_buffer_integer(v);
                             if disp.commit_buffer().is_err() {
                                 self.display = None;
-                                tx.send(ChannelMsg::DisplayConnected(false)).expect("Channel died");
+                                tx.send(ChannelMsg::DisplayConnected(false))
+                                    .expect("Channel died");
                             }
                         }
                     }
                 }
-
-
             } else {
                 self.socket = None;
-                tx.send(ChannelMsg::WebsocketConnected(false)).expect("Channel died");
+                tx.send(ChannelMsg::WebsocketConnected(false))
+                    .expect("Channel died");
 
                 if let Some(disp) = &mut self.display {
                     disp.device().clear_display_buffer();
