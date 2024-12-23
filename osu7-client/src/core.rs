@@ -5,7 +5,7 @@ use std::{
 };
 
 use mcp2221::Handle;
-use osu7_i2c::{Dimming, Osu7Display};
+use osu7_i2c::{Dimming, Display, Osu7Display};
 use tungstenite::{stream::MaybeTlsStream, Message, WebSocket};
 
 use crate::{schema::Data, Brightness, ChannelMsg, Statistic};
@@ -87,10 +87,11 @@ impl Core {
                     }
                     ChannelMsg::AppExit => {
                         if let Some(disp) = &mut self.display {
-                            disp.device().clear_display_buffer();
-                            disp.commit_buffer().expect("Failed to commit buffer");
+                            disp.device().set_display(Display::OFF)
+                                .expect("Failed to turn off display");
                         }
-                        break;
+
+                        tx.send(ChannelMsg::AppExit).expect("Channel died");
                     }
                     _ => {}
                 }

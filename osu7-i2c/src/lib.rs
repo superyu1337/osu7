@@ -1,11 +1,12 @@
 use adafruit_7segment::{Index, SevenSegment};
 use embedded_hal::blocking::i2c::{Write, WriteRead};
 use ht16k33::LedLocation;
-use ht16k33::{Display, HT16K33};
+use ht16k33::HT16K33;
 
 pub use adafruit_7segment::AsciiChar;
 pub use ht16k33::i2c_mock;
 pub use ht16k33::Dimming;
+pub use ht16k33::Display;
 
 use std::fmt::Debug;
 
@@ -24,6 +25,18 @@ where
         Self {
             dev: HT16K33::new(i2c, address),
         }
+    }
+
+    pub fn destroy(self) {
+        self.dev.destroy();
+    }
+
+
+    pub fn shutdown(mut self) {
+        self.dev
+            .set_display(Display::OFF)
+            .expect("Could not turn off the display");
+        self.dev.destroy();
     }
 
     pub fn device(&mut self) -> &mut HT16K33<I2C> {

@@ -92,7 +92,7 @@ impl App {
 
         let _menu_channel = MenuEvent::receiver();
         let _tray_channel = TrayIconEvent::receiver();
-
+        
         event_loop.run(move |event, _, control_flow| {
             *control_flow = ControlFlow::Wait;
 
@@ -105,7 +105,7 @@ impl App {
                     tray_icon = Some(
                         TrayIconBuilder::new()
                             .with_menu(Box::new(tray_menu.clone()))
-                            .with_tooltip("tao - awesome windowing lib")
+                            .with_tooltip("Osu7 Client")
                             .with_icon(icon)
                             .build()
                             .unwrap(),
@@ -128,7 +128,11 @@ impl App {
                     }
                     ChannelMsg::WebsocketConnected(connected) => {
                         ws_connected.set_checked(connected);
-                    }
+                    },
+                    ChannelMsg::AppExit => {
+                        tray_icon.take();
+                        *control_flow = ControlFlow::Exit;
+                    },
                     _ => {}
                 },
 
@@ -245,15 +249,12 @@ impl App {
                     // Exit
                     if event.id == quit_i.id() {
                         tx.send(ChannelMsg::AppExit).expect("Channel died");
-
-                        tray_icon.take();
-                        *control_flow = ControlFlow::Exit;
                     }
                 }
 
                 _ => {}
             }
-        })
+        });
     }
 
     fn icon() -> tray_icon::Icon {
