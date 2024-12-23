@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="25 25 300 300"
+   version="1.1"
+   id="svg56"
+   sodipodi:docname="Osu!_Logo_2016.svg"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   inkscape:export-filename="../Documents/GitHub/osu7/osu7-client/asset/icon-new.png"
+   inkscape:export-xdpi="20.48"
+   inkscape:export-ydpi="20.48"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs56" />
+  <sodipodi:namedview
+     id="namedview56"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:zoom="2.7566667"
+     inkscape:cx="144.19589"
+     inkscape:cy="140.93107"
+     inkscape:window-width="1920"
+     inkscape:window-height="1006"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg56" />
+  <style
+     id="style1">.st1{opacity:.15}.st3{fill:#f1f1f2}.st4{fill:#231f20}.st5{fill:#808184}.st8{fill:#59595c}.st9{fill:#a7a8ab}.st10{fill:#6d6e70}.st11{fill:#221f1f}.st12{fill:#404041}.st13{fill:#58595b}.st14{fill:#bbbdbf}.st15{fill:#fff}.st16{fill:#a6a8ab}</style>
+  <circle
+     cx="175"
+     cy="175"
+     r="143.7"
+     fill="#f6a"
+     id="circle1" />
+  <g
+     class="st1"
+     id="Triangles">
+    <defs
+       id="defs1">
+      <circle
+         id="a"
+         class="st1"
+         cx="175"
+         cy="175"
+         r="150" />
+    </defs>
+    <clipPath
+       id="b">
+      <use
+         xlink:href="#a"
+         overflow="visible"
+         id="use1" />
+    </clipPath>
+    <g
+       clip-path="url(#b)"
+       id="g54">
+      <path
+         class="st3"
+         d="M-81.2 336.9 175-106.9l256.2 443.8z"
+         id="path1" />
+      <path
+         class="st4"
+         d="M68.8 443.7 325 0l256.2 443.7z"
+         id="path2" />
+      <path
+         class="st5"
+         d="m-409.8 363.4 256.2-443.7 256.2 443.7z"
+         id="path3" />
+      <path
+         d="m61.4 158.2 256.2-443.8 256.2 443.8z"
+         fill="#929497"
+         id="path4" />
+      <path
+         d="M-222.4 380 33.8-63.7 290 380z"
+         fill="#636466"
+         id="path5" />
+      <path
+         class="st8"
+         d="m-100.1 646.9 256.2-443.8 256.2 443.8z"
+         id="path6" />
+      <path
+         class="st9"
+         d="m-164.9 147.2 97.3-168.5 97.3 168.5zm81.5 376.6 97.3-168.5 97.3 168.5z"
+         id="path7" />
+      <path
+         class="st10"
+         d="m134.3 220.8 97.3-168.5 97.3 168.5z"
+         id="path8" />
+      <path
+         class="st9"
+         d="M298.7 485.7 396 317.2l97.2 168.5z"
+         id="path9" />
+      <path
+         class="st8"
+         d="m108.4 621.4 48.6-84.2 48.7 84.2z"
+         id="path10" />
+      <path
+         class="st11"
+         d="m278.7 305.9 48.6-84.2 48.6 84.2zM46.2 400l97.3-168.5L240.8 400z"
+         id="path11" />
+      <path
+         class="st5"
+         d="M108.8-86.6 36.5 38.6h194.6L158.8-86.6zm213.2 0-23.6 40.9h97.3L372-86.6z"
+         id="path12" />
+      <path
+         class="st12"
+         d="M35.3 332.5 132.6 164l97.3 168.5z"
+         id="path13" />
+      <path
+         class="st5"
+         d="m236.1 369.2 97.2-168.5 97.3 168.5z"
+         id="path14" />
+      <path
+         class="st8"
+         d="m-51.9 428.8 48.1-83.3 48.1 83.3z"
+         id="path15" />
+      <path
+         class="st13"
+         d="m123.2 104.8 48.1-83.3 48.1 83.3z"
+         id="path16" />
+      <path
+         class="st11"
+         d="m283 90.2 48.1-83.3 48.1 83.3z"
+         id="path17" />
+      <path
+         class="st5"
+         d="m-61.9 331.6 24.1-41.7 24 41.7z"
+         id="path18" />
+      <path
+         class="st8"
+         d="m132.5 621.6 24-41.7 24.1 41.7zm84.2-156 24-41.7 24 41.7z"
+         id="path19" />
+      <path
+         class="st12"
+         d="m197.1 259.7 48.1-83.3 48.1 83.3z"
+         id="path20" />
+      <path
+         class="st3"
+         d="m283 239.3 48.1-83.3 48.1 83.3z"
+         id="path21" />
+      <path
+         class="st9"
+         d="M-49.5 78.8-1.4-4.5l48.1 83.3zm-48.4 146.6 48.1-83.3 48.1 83.3z"
+         id="path22" />
+      <path
+         class="st5"
+         d="m288.2-20 24-41.6L336.3-20z"
+         id="path23" />
+      <path
+         class="st14"
+         d="m187.2 116.2 24.1-41.6 24 41.6z"
+         id="path24" />
+      <path
+         class="st15"
+         d="m231.9 63.8 6.4-11 6.4 11z"
+         id="path25" />
+      <path
+         class="st10"
+         d="M28.9 117.8 77 34.5l48.1 83.3z"
+         id="path26" />
+      <path
+         class="st16"
+         d="m110.8 331.9 48.1-83.3 48.1 83.3z"
+         id="path27" />
+      <path
+         class="st4"
+         d="m107 263.1 18.1-31.4 18 31.4z"
+         id="path28" />
+      <path
+         class="st9"
+         d="m214 285.3 24-41.7 24.1 41.7zm-5.4-118.1 24-41.6 24.1 41.6z"
+         id="path29" />
+      <path
+         class="st3"
+         d="m226 102.8 48.1-83.3 48 83.3z"
+         id="path30" />
+      <path
+         class="st16"
+         d="m1.2 143.6 48.1-83.3 48.1 83.3z"
+         id="path31" />
+      <path
+         class="st8"
+         d="m14 272.2 18.3-31.8 18.3 31.8z"
+         id="path32" />
+      <path
+         class="st16"
+         d="m265.4 230.6 18.3-31.8 18.3 31.8z"
+         id="path33" />
+      <path
+         class="st15"
+         d="M156.7 84.8 175 53.1l18.3 31.7z"
+         id="path34" />
+      <path
+         class="st13"
+         d="m156.7 282.1 18.3-31.8 18.3 31.8z"
+         id="path35" />
+      <path
+         class="st8"
+         d="m-19.7 88 18.3-31.8L17 88zm258.1 272.2 18.3-31.7 18.3 31.7z"
+         id="path36" />
+      <path
+         class="st5"
+         d="m307.5 135.6 18.3-31.8 18.3 31.8z"
+         id="path37" />
+      <path
+         class="st14"
+         d="m45.3 233.1 18.3-31.8L82 233.1z"
+         id="path38" />
+      <path
+         class="st3"
+         d="m72.3 295.1 18.3-31.8 18.4 31.8zM27.6 167.7 46 136l18.3 31.7z"
+         id="path39" />
+      <path
+         class="st8"
+         d="m113.7 123.7 9.1-15.8 9.2 15.8z"
+         id="path40" />
+      <path
+         class="st14"
+         d="m50.8 152.9 9.1-15.8 9.2 15.8z"
+         id="path41" />
+      <path
+         d="m107.7 84.4 9.2-15.9 9.2 15.9z"
+         fill="#e6e7e8"
+         id="path42" />
+      <path
+         class="st11"
+         d="m69 360.2 18.3-31.7 18.3 31.7z"
+         id="path43" />
+      <path
+         class="st8"
+         d="m112.2 419.2 18.3-31.8 18.3 31.8zm404.5-131.1 18.4-31.8 18.3 31.8z"
+         id="path44" />
+      <path
+         class="st5"
+         d="M187.7 61.9 206 30.1l18.4 31.8z"
+         id="path45" />
+      <path
+         class="st15"
+         d="m283.4 128.2 18.3-31.7 18.3 31.7z"
+         id="path46" />
+      <path
+         class="st8"
+         d="m316.6 622.1 9.2-15.9 9.2 15.9z"
+         id="path47" />
+      <path
+         class="st9"
+         d="m262.4 411.2 9.2-15.8 9.1 15.8z"
+         id="path48" />
+      <path
+         class="st8"
+         d="m577.5 394.4 9.2-15.9 9.2 15.9z"
+         id="path49" />
+      <path
+         class="st5"
+         d="m-97.4 339.9 18.3-31.7 18.4 31.7zm375.1-24.4 18.4-31.8 18.3 31.8z"
+         id="path50" />
+      <path
+         class="st9"
+         d="m286.9 268.6 9.2-15.9 9.1 15.9z"
+         id="path51" />
+      <path
+         d="m210.1 128.5 10.9-18.9 10.9 18.9z"
+         fill="#d0d2d3"
+         id="path52" />
+      <path
+         class="st5"
+         d="M94.9-41.1 104-57l9.2 15.9z"
+         id="path53" />
+      <path
+         class="st8"
+         d="M386.7 121.9 405 90.2l18.4 31.7zM463 336.8l9.2-15.9 9.2 15.9z"
+         id="path54" />
+    </g>
+  </g>
+  <path
+     class="st15"
+     d="M175 25C92.2 25 25 92.2 25 175s67.2 150 150 150 150-67.2 150-150S257.8 25 175 25zm0 285c-74.6 0-135-60.4-135-135S100.4 40 175 40s135 60.4 135 135-60.4 135-135 135z"
+     id="path56" />
+  <g
+     id="g1"
+     transform="translate(-17.839063,4.2410321)">
+    <text
+       xml:space="preserve"
+       style="font-size:90px;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000"
+       x="167.3288"
+       y="203.11397"
+       id="text56"><tspan
+         sodipodi:role="line"
+         id="tspan56"
+         x="167.3288"
+         y="203.11397"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:90px;font-family:Aller;-inkscape-font-specification:'Aller Bold';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1"
+         dx="0">Osu!</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:90px;font-family:Aller;-inkscape-font-specification:'Aller Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ffffff;fill-opacity:1"
+       x="282.29431"
+       y="197.30956"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         x="282.29431"
+         y="197.30956">7</tspan></text>
+  </g>
+</svg>

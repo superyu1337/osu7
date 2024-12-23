@@ -11,7 +11,7 @@ use tray_icon::{
 
 use crate::ChannelMsg;
 
-const ICON_BUFFER: &[u8; 5169] = include_bytes!("../asset/icon.png");
+const ICON_BUFFER: &[u8; 5169] = include_bytes!("../../assets/osu7_logo_trayicon.png");
 
 pub struct App;
 
