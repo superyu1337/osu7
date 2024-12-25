@@ -8,33 +8,42 @@ use mcp2221::Handle;
 use osu7_i2c::{Dimming, Display, Osu7Display};
 use tungstenite::{stream::MaybeTlsStream, Message, WebSocket};
 
-use crate::{schema::Data, Brightness, ChannelMsg, Statistic};
+use crate::{schema::OsuData, Brightness, ChannelMsg, DataProviderServer, Statistic};
+
+const STREAMCOMPANION_FIRSTMSG: &str = r#"["acc","ppIfMapEndsNow","ppIfRestFced","unstableRate"]"#;
 
 pub struct Core {
     socket: Option<WebSocket<MaybeTlsStream<TcpStream>>>,
     display: Option<Osu7Display<Handle>>,
     brightness: Brightness,
+    server: DataProviderServer,
+    data: OsuData,
 }
 
 impl Core {
-    pub fn run(rx: Receiver<ChannelMsg>, tx: Sender<ChannelMsg>, url: String) -> JoinHandle<()> {
+    pub fn run(rx: Receiver<ChannelMsg>, tx: Sender<ChannelMsg>) -> JoinHandle<()> {
         let mut instance = Core {
             socket: None,
             display: None,
             brightness: Brightness::Medium,
+            server: DataProviderServer::Tosu,
+            data: OsuData::default()
         };
         std::thread::spawn(move || {
-            Self::inner(&mut instance, rx, tx, url);
+            Self::inner(&mut instance, rx, tx);
         })
     }
 
-    pub fn connect(&mut self, url: &str) {
+    pub fn connect(&mut self) {
+        let url = self.server.get_url();
+
         if let Ok((mut socket, _)) = tungstenite::connect(url) {
-            socket
-                .send(tungstenite::Message::Text(
-                    "[acc,simulatedPp,ppIfMapEndsNow,ppIfRestFced]".into(),
-                ))
+
+            if self.server == DataProviderServer::StreamCompanion {
+                socket
+                .send(tungstenite::Message::Text(STREAMCOMPANION_FIRSTMSG.into()))
                 .expect("Failed to send message to websocket");
+            }
 
             self.socket = Some(socket);
         } else {
@@ -74,8 +83,8 @@ impl Core {
         }
     }
 
-    pub fn inner(&mut self, rx: Receiver<ChannelMsg>, tx: Sender<ChannelMsg>, url: String) {
-        let mut mode = Statistic::PerformanceIfEndsNow;
+    pub fn inner(&mut self, rx: Receiver<ChannelMsg>, tx: Sender<ChannelMsg>) {
+        let mut mode = Statistic::PerformanceCurrent;
         let mut last_brightness = self.brightness;
 
         loop {
@@ -92,7 +101,12 @@ impl Core {
                         }
 
                         tx.send(ChannelMsg::AppExit).expect("Channel died");
-                    }
+                    },
+                    ChannelMsg::ChangeServer(new_server) => {
+                        self.server = new_server;
+                        self.socket = None;
+                        tx.send(ChannelMsg::WebsocketConnected(false)).expect("Channel died");
+                    },
                     _ => {}
                 }
             }
@@ -118,7 +132,7 @@ impl Core {
             }
 
             if self.socket.is_none() {
-                self.connect(&url);
+                self.connect();
 
                 if self.socket.is_some() {
                     tx.send(ChannelMsg::WebsocketConnected(true))
@@ -127,13 +141,15 @@ impl Core {
             }
 
             if let Some(Message::Text(bytes)) = self.read_socket() {
-                let data: Data = serde_json::from_str(bytes.as_str()).unwrap();
+
+                let new_data: OsuData = self.server.deserialize_response(bytes.as_bytes(), self.data);
+                self.data = new_data;
 
                 let value_to_display = match mode {
-                    Statistic::PerformanceIfFC => data.pp_if_fc(),
-                    Statistic::PerformanceIfEndsNow => data.pp_ends_now(),
-                    Statistic::Accuracy => data.accuracy(),
-                    Statistic::UnstableRate => data.unstable_rate(),
+                    Statistic::PerformanceFC => self.data.pp_fc(),
+                    Statistic::PerformanceCurrent => self.data.pp_current(),
+                    Statistic::Accuracy => self.data.accuracy(),
+                    Statistic::UnstableRate => self.data.unstable_rate(),
                 };
 
                 match mode {

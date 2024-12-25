@@ -54,7 +54,7 @@ impl App {
         let tray_menu = Menu::new();
 
         let display_options = Submenu::new("Display", true);
-        let pp_ends_now_i = CheckMenuItem::new("PP (If ends now)", false, true, None);
+        let pp_ends_now_i = CheckMenuItem::new("PP (Current)", false, true, None);
         let pp_if_fc_i = CheckMenuItem::new("PP (If FC)", true, false, None);
         let acc_i = CheckMenuItem::new("Accuracy", true, false, None);
         let ur_i = CheckMenuItem::new("Unstable Rate", true, false, None);
@@ -72,6 +72,14 @@ impl App {
             .append_items(&[&max_brightness_i, &med_brightness_i, &min_brightness_i])
             .unwrap();
 
+        let data_provider_options = Submenu::new("Data Provider", true);
+        let tosu_i = CheckMenuItem::new("Tosu", false, true, None);
+        let streamcompanion_i = CheckMenuItem::new("StreamCompanion", true, false, None);
+    
+        data_provider_options
+            .append_items(&[&tosu_i, &streamcompanion_i])
+            .unwrap();
+
         let quit_i = MenuItem::new("Quit", true, None);
         let ws_connected = CheckMenuItem::new("WebSocket Connected", false, false, None);
         let display_connected = CheckMenuItem::new("Display Connected", false, false, None);
@@ -81,6 +89,7 @@ impl App {
                 &ws_connected,
                 &display_connected,
                 &PredefinedMenuItem::separator(),
+                &data_provider_options,
                 &display_options,
                 &brightness_options,
                 &PredefinedMenuItem::separator(),
@@ -195,7 +204,7 @@ impl App {
                         pp_if_fc_i.set_enabled(false);
 
                         tx.send(ChannelMsg::ChangeDisplayStat(
-                            crate::Statistic::PerformanceIfFC,
+                            crate::Statistic::PerformanceFC,
                         ))
                         .expect("Channel died")
                     }
@@ -211,7 +220,7 @@ impl App {
                         pp_ends_now_i.set_enabled(false);
 
                         tx.send(ChannelMsg::ChangeDisplayStat(
-                            crate::Statistic::PerformanceIfEndsNow,
+                            crate::Statistic::PerformanceCurrent,
                         ))
                         .expect("Channel died")
                     }
@@ -242,8 +251,29 @@ impl App {
 
                         tx.send(ChannelMsg::ChangeDisplayStat(
                             crate::Statistic::UnstableRate,
-                        ))
-                        .expect("Channel died")
+                        )).expect("Channel died")
+                    }
+
+                    if event.id == tosu_i.id() && tosu_i.is_checked() {
+                        streamcompanion_i.set_checked(false);
+                        streamcompanion_i.set_enabled(true);
+
+                        tosu_i.set_enabled(false);
+
+                        tx.send(ChannelMsg::ChangeServer(
+                            crate::DataProviderServer::Tosu
+                        )).expect("Channel died");
+                    }
+
+                    if event.id == streamcompanion_i.id() && streamcompanion_i.is_checked() {
+                        tosu_i.set_checked(false);
+                        tosu_i.set_enabled(true);
+
+                        streamcompanion_i.set_enabled(false);
+
+                        tx.send(ChannelMsg::ChangeServer(
+                            crate::DataProviderServer::StreamCompanion
+                        )).expect("Channel died");
                     }
 
                     // Exit
