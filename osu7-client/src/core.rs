@@ -27,7 +27,7 @@ impl Core {
             display: None,
             brightness: Brightness::Medium,
             server: DataProviderServer::Tosu,
-            data: OsuData::default()
+            data: OsuData::default(),
         };
         std::thread::spawn(move || {
             Self::inner(&mut instance, rx, tx);
@@ -38,11 +38,10 @@ impl Core {
         let url = self.server.get_url();
 
         if let Ok((mut socket, _)) = tungstenite::connect(url) {
-
             if self.server == DataProviderServer::StreamCompanion {
                 socket
-                .send(tungstenite::Message::Text(STREAMCOMPANION_FIRSTMSG.into()))
-                .expect("Failed to send message to websocket");
+                    .send(tungstenite::Message::Text(STREAMCOMPANION_FIRSTMSG.into()))
+                    .expect("Failed to send message to websocket");
             }
 
             self.socket = Some(socket);
@@ -96,17 +95,19 @@ impl Core {
                     }
                     ChannelMsg::AppExit => {
                         if let Some(disp) = &mut self.display {
-                            disp.device().set_display(Display::OFF)
+                            disp.device()
+                                .set_display(Display::OFF)
                                 .expect("Failed to turn off display");
                         }
 
                         tx.send(ChannelMsg::AppExit).expect("Channel died");
-                    },
+                    }
                     ChannelMsg::ChangeServer(new_server) => {
                         self.server = new_server;
                         self.socket = None;
-                        tx.send(ChannelMsg::WebsocketConnected(false)).expect("Channel died");
-                    },
+                        tx.send(ChannelMsg::WebsocketConnected(false))
+                            .expect("Channel died");
+                    }
                     _ => {}
                 }
             }
@@ -141,8 +142,9 @@ impl Core {
             }
 
             if let Some(Message::Text(bytes)) = self.read_socket() {
-
-                let new_data: OsuData = self.server.deserialize_response(bytes.as_bytes(), self.data);
+                let new_data: OsuData = self
+                    .server
+                    .deserialize_response(bytes.as_bytes(), self.data);
                 self.data = new_data;
 
                 let value_to_display = match mode {

@@ -31,7 +31,6 @@ where
         self.dev.destroy();
     }
 
-
     pub fn shutdown(mut self) {
         self.dev
             .set_display(Display::OFF)

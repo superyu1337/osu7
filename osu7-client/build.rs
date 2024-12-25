@@ -1,4 +1,4 @@
-#[cfg(target_os="windows")]
+#[cfg(target_os = "windows")]
 fn main() -> std::io::Result<()> {
     if std::env::var_os("CARGO_CFG_WINDOWS").is_some() {
         winresource::WindowsResource::new()

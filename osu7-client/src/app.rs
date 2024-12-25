@@ -75,7 +75,7 @@ impl App {
         let data_provider_options = Submenu::new("Data Provider", true);
         let tosu_i = CheckMenuItem::new("Tosu", false, true, None);
         let streamcompanion_i = CheckMenuItem::new("StreamCompanion", true, false, None);
-    
+
         data_provider_options
             .append_items(&[&tosu_i, &streamcompanion_i])
             .unwrap();
@@ -101,7 +101,7 @@ impl App {
 
         let _menu_channel = MenuEvent::receiver();
         let _tray_channel = TrayIconEvent::receiver();
-        
+
         event_loop.run(move |event, _, control_flow| {
             *control_flow = ControlFlow::Wait;
 
@@ -137,11 +137,11 @@ impl App {
                     }
                     ChannelMsg::WebsocketConnected(connected) => {
                         ws_connected.set_checked(connected);
-                    },
+                    }
                     ChannelMsg::AppExit => {
                         tray_icon.take();
                         *control_flow = ControlFlow::Exit;
-                    },
+                    }
                     _ => {}
                 },
 
@@ -251,7 +251,8 @@ impl App {
 
                         tx.send(ChannelMsg::ChangeDisplayStat(
                             crate::Statistic::UnstableRate,
-                        )).expect("Channel died")
+                        ))
+                        .expect("Channel died")
                     }
 
                     if event.id == tosu_i.id() && tosu_i.is_checked() {
@@ -260,9 +261,8 @@ impl App {
 
                         tosu_i.set_enabled(false);
 
-                        tx.send(ChannelMsg::ChangeServer(
-                            crate::DataProviderServer::Tosu
-                        )).expect("Channel died");
+                        tx.send(ChannelMsg::ChangeServer(crate::DataProviderServer::Tosu))
+                            .expect("Channel died");
                     }
 
                     if event.id == streamcompanion_i.id() && streamcompanion_i.is_checked() {
@@ -272,8 +272,9 @@ impl App {
                         streamcompanion_i.set_enabled(false);
 
                         tx.send(ChannelMsg::ChangeServer(
-                            crate::DataProviderServer::StreamCompanion
-                        )).expect("Channel died");
+                            crate::DataProviderServer::StreamCompanion,
+                        ))
+                        .expect("Channel died");
                     }
 
                     // Exit

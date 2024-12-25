@@ -11,7 +11,7 @@ pub struct TosuResponse {
 pub struct Gameplay {
     pp: PerformancePoints,
     accuracy: f64,
-    hits: Hits
+    hits: Hits,
 }
 
 #[derive(Default, Debug, Clone, Copy, Serialize, Deserialize)]
