@@ -14,7 +14,7 @@ pub const I2C_ADDR: u8 = 0x70;
 
 pub struct Osu7Display<I2C> {
     dev: HT16K33<I2C>,
-    old_buffer: [DisplayData; 16]
+    old_buffer: [DisplayData; 16],
 }
 
 impl<I2C, E> Osu7Display<I2C>
@@ -25,7 +25,7 @@ where
     pub fn new(i2c: I2C, address: u8) -> Osu7Display<I2C> {
         Self {
             dev: HT16K33::new(i2c, address),
-            old_buffer: [DisplayData::empty(); 16]
+            old_buffer: [DisplayData::empty(); 16],
         }
     }
 
@@ -56,10 +56,18 @@ where
     }
 
     pub fn write_buffer_osu7(&mut self) -> Result<(), E> {
-        self.dev.update_buffer_with_char(Index::One, AsciiChar::new('0')).expect("Failed to set 0");
-        self.dev.update_buffer_with_char(Index::Two, AsciiChar::new('S')).expect("Failed to set S");
-        self.dev.update_buffer_with_char(Index::Three, AsciiChar::new('U')).expect("Failed to set U");
-        self.dev.update_buffer_with_char(Index::Four, AsciiChar::new('7')).expect("Failed to set 7");
+        self.dev
+            .update_buffer_with_char(Index::One, AsciiChar::new('0'))
+            .expect("Failed to set 0");
+        self.dev
+            .update_buffer_with_char(Index::Two, AsciiChar::new('S'))
+            .expect("Failed to set S");
+        self.dev
+            .update_buffer_with_char(Index::Three, AsciiChar::new('U'))
+            .expect("Failed to set U");
+        self.dev
+            .update_buffer_with_char(Index::Four, AsciiChar::new('7'))
+            .expect("Failed to set 7");
         Ok(())
     }
 
