@@ -1,5 +1,6 @@
 use adafruit_7segment::{Index, SevenSegment};
 use embedded_hal::blocking::i2c::{Write, WriteRead};
+use ht16k33::DisplayData;
 use ht16k33::LedLocation;
 use ht16k33::HT16K33;
 
@@ -14,6 +15,7 @@ pub const I2C_ADDR: u8 = 0x70;
 
 pub struct Osu7Display<I2C> {
     dev: HT16K33<I2C>,
+    old_buffer: [DisplayData; 16]
 }
 
 impl<I2C, E> Osu7Display<I2C>
@@ -24,6 +26,7 @@ where
     pub fn new(i2c: I2C, address: u8) -> Osu7Display<I2C> {
         Self {
             dev: HT16K33::new(i2c, address),
+            old_buffer: [DisplayData::empty(); 16]
         }
     }
 
@@ -43,37 +46,43 @@ where
     }
 
     pub fn commit_buffer(&mut self) -> Result<(), E> {
-        self.dev.write_display_buffer()
+        let new_buffer = self.dev.display_buffer();
+
+        if self.old_buffer != *self.dev.display_buffer() {
+            self.old_buffer = *new_buffer;
+            return self.dev.write_display_buffer();
+        }
+
+        Ok(())
     }
 
     pub fn write_buffer_osu7(&mut self) -> Result<(), E> {
         // Print O
-        self.dev.set_led(LedLocation::new(0, 0).unwrap(), true)?;
-        self.dev.set_led(LedLocation::new(0, 1).unwrap(), true)?;
-        self.dev.set_led(LedLocation::new(0, 2).unwrap(), true)?;
-        self.dev.set_led(LedLocation::new(0, 3).unwrap(), true)?;
-        self.dev.set_led(LedLocation::new(0, 4).unwrap(), true)?;
-        self.dev.set_led(LedLocation::new(0, 5).unwrap(), true)?;
+        self.dev.update_display_buffer(LedLocation::new(0, 0).unwrap(), true);
+        self.dev.update_display_buffer(LedLocation::new(0, 1).unwrap(), true);
+        self.dev.update_display_buffer(LedLocation::new(0, 2).unwrap(), true);
+        self.dev.update_display_buffer(LedLocation::new(0, 3).unwrap(), true);
+        self.dev.update_display_buffer(LedLocation::new(0, 4).unwrap(), true);
+        self.dev.update_display_buffer(LedLocation::new(0, 5).unwrap(), true);
 
         // Print S
-        self.dev.set_led(LedLocation::new(2, 0).unwrap(), true)?;
-        self.dev.set_led(LedLocation::new(2, 5).unwrap(), true)?;
-        self.dev.set_led(LedLocation::new(2, 6).unwrap(), true)?;
-        self.dev.set_led(LedLocation::new(2, 2).unwrap(), true)?;
-        self.dev.set_led(LedLocation::new(2, 3).unwrap(), true)?;
+        self.dev.update_display_buffer(LedLocation::new(2, 0).unwrap(), true);
+        self.dev.update_display_buffer(LedLocation::new(2, 5).unwrap(), true);
+        self.dev.update_display_buffer(LedLocation::new(2, 6).unwrap(), true);
+        self.dev.update_display_buffer(LedLocation::new(2, 2).unwrap(), true);
+        self.dev.update_display_buffer(LedLocation::new(2, 3).unwrap(), true);
 
         // Print U
-        self.dev.set_led(LedLocation::new(6, 1).unwrap(), true)?;
-        self.dev.set_led(LedLocation::new(6, 2).unwrap(), true)?;
-        self.dev.set_led(LedLocation::new(6, 3).unwrap(), true)?;
-        self.dev.set_led(LedLocation::new(6, 4).unwrap(), true)?;
-        self.dev.set_led(LedLocation::new(6, 5).unwrap(), true)?;
+        self.dev.update_display_buffer(LedLocation::new(6, 1).unwrap(), true);
+        self.dev.update_display_buffer(LedLocation::new(6, 2).unwrap(), true);
+        self.dev.update_display_buffer(LedLocation::new(6, 3).unwrap(), true);
+        self.dev.update_display_buffer(LedLocation::new(6, 4).unwrap(), true);
+        self.dev.update_display_buffer(LedLocation::new(6, 5).unwrap(), true);
 
         // Print 7
-        self.dev.set_led(LedLocation::new(8, 0).unwrap(), true)?;
-        self.dev.set_led(LedLocation::new(8, 1).unwrap(), true)?;
-        self.dev.set_led(LedLocation::new(8, 2).unwrap(), true)?;
-
+        self.dev.update_display_buffer(LedLocation::new(8, 0).unwrap(), true);
+        self.dev.update_display_buffer(LedLocation::new(8, 1).unwrap(), true);
+        self.dev.update_display_buffer(LedLocation::new(8, 2).unwrap(), true);
         Ok(())
     }
 
