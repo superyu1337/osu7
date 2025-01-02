@@ -57,32 +57,10 @@ where
     }
 
     pub fn write_buffer_osu7(&mut self) -> Result<(), E> {
-        // Print O
-        self.dev.update_display_buffer(LedLocation::new(0, 0).unwrap(), true);
-        self.dev.update_display_buffer(LedLocation::new(0, 1).unwrap(), true);
-        self.dev.update_display_buffer(LedLocation::new(0, 2).unwrap(), true);
-        self.dev.update_display_buffer(LedLocation::new(0, 3).unwrap(), true);
-        self.dev.update_display_buffer(LedLocation::new(0, 4).unwrap(), true);
-        self.dev.update_display_buffer(LedLocation::new(0, 5).unwrap(), true);
-
-        // Print S
-        self.dev.update_display_buffer(LedLocation::new(2, 0).unwrap(), true);
-        self.dev.update_display_buffer(LedLocation::new(2, 5).unwrap(), true);
-        self.dev.update_display_buffer(LedLocation::new(2, 6).unwrap(), true);
-        self.dev.update_display_buffer(LedLocation::new(2, 2).unwrap(), true);
-        self.dev.update_display_buffer(LedLocation::new(2, 3).unwrap(), true);
-
-        // Print U
-        self.dev.update_display_buffer(LedLocation::new(6, 1).unwrap(), true);
-        self.dev.update_display_buffer(LedLocation::new(6, 2).unwrap(), true);
-        self.dev.update_display_buffer(LedLocation::new(6, 3).unwrap(), true);
-        self.dev.update_display_buffer(LedLocation::new(6, 4).unwrap(), true);
-        self.dev.update_display_buffer(LedLocation::new(6, 5).unwrap(), true);
-
-        // Print 7
-        self.dev.update_display_buffer(LedLocation::new(8, 0).unwrap(), true);
-        self.dev.update_display_buffer(LedLocation::new(8, 1).unwrap(), true);
-        self.dev.update_display_buffer(LedLocation::new(8, 2).unwrap(), true);
+        self.dev.update_buffer_with_char(Index::One, AsciiChar::new('0')).expect("Failed to set 0");
+        self.dev.update_buffer_with_char(Index::Two, AsciiChar::new('S')).expect("Failed to set S");
+        self.dev.update_buffer_with_char(Index::Three, AsciiChar::new('U')).expect("Failed to set U");
+        self.dev.update_buffer_with_char(Index::Four, AsciiChar::new('7')).expect("Failed to set 7");
         Ok(())
     }
 
