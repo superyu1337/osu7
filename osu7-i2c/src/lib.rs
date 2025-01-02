@@ -1,7 +1,6 @@
 use adafruit_7segment::{Index, SevenSegment};
 use embedded_hal::blocking::i2c::{Write, WriteRead};
 use ht16k33::DisplayData;
-use ht16k33::LedLocation;
 use ht16k33::HT16K33;
 
 pub use adafruit_7segment::AsciiChar;
